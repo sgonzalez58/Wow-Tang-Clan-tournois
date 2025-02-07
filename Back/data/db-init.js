@@ -35,7 +35,7 @@ const createClassAndRolesTables = pool
         `CREATE TABLE IF NOT EXISTS can_be (
       roleId        integer NOT NULL,
       classId       integer NOT NULL,
-      CONSTRAINT fk_role FOREIGN KEY(roleId) REFERENCES roles(id)
+      CONSTRAINT fk_role FOREIGN KEY(roleId) REFERENCES roles(id),
       CONSTRAINT fk_class FOREIGN KEY(classId) REFERENCES class(id)
     )`
       )
@@ -52,17 +52,19 @@ const createClassAndRolesTables = pool
       .query(
         `CREATE TABLE IF NOT EXISTS characters (
         id          SERIAL PRIMARY KEY,
-        name        varchar(64) NOT NULL UNIQUE
+        name        varchar(64) NOT NULL UNIQUE,
         classId     integer NOT NULL,
         roleId      integer NOT NULL,
         ilvl        integer NOT NULL,
-        rio         integer NOT NULL
-        CONSTRAINT fk_role FOREIGN KEY(roleId) REFERENCES roles(id)
-        CONSTRAINT fk_class FOREIGN KEY(classId) REFERENCES class(id)
+        rio         integer NOT NULL,
+        CONSTRAINT fk_role FOREIGN KEY(roleId) REFERENCES roles(id),
+        CONSTRAINT fk_class FOREIGN KEY(classId) REFERENCES class(id),
+        CHECK (ilvl BETWEEN 0 AND 645),
+        CHECK (rio BETWEEN 0 AND 4500)
     )`
       )
       .then(() => {
-        console.log("Table can_be créée avec succès");
+        console.log("Table characters créée avec succès");
       })
       .catch((err) => {
         console.error("Erreur lors de la création de la table characters:", err);
