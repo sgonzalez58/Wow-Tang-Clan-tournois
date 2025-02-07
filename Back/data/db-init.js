@@ -14,6 +14,11 @@ CREATE TABLE IF NOT EXISTS roles (
   label     varchar(64) NOT NULL UNIQUE
 )`;
 
+const createPartiesTableQuery = `
+CREATE TABLE IF NOT EXISTS parties (
+  id        SERIAL PRIMARY KEY
+)`;
+
 const createClassAndRolesTables = pool
   .query(createClassTableQuery)
   .then(() => {
@@ -22,9 +27,13 @@ const createClassAndRolesTables = pool
   })
   .then(() => {
     console.log("Table Roles créée avec succès");
+    return pool.query(createPartiesTableQuery);
+  })
+  .then(() => {
+    console.log("Table Parties créée avec succès");
   })
   .catch((err) => {
-    console.error("Erreur lors de la création des tables:", err);
+    console.error("Erreur lors de la création des tables class, roles ou parties:", err);
     throw err;
   });
 
@@ -32,7 +41,7 @@ const createClassAndRolesTables = pool
   createClassAndRolesTables.then(() => {
     pool
       .query(
-        `CREATE TABLE IF NOT EXISTS can_be (
+        `CREATE TABLE IF NOT EXISTS classRoles (
       roleId        integer NOT NULL,
       classId       integer NOT NULL,
       CONSTRAINT fk_role FOREIGN KEY(roleId) REFERENCES roles(id),
@@ -40,13 +49,13 @@ const createClassAndRolesTables = pool
     )`
       )
       .then(() => {
-        console.log("Table can_be créée avec succès");
+        console.log("Table classRoles créée avec succès");
       })
       .catch((err) => {
-        console.error("Erreur lors de la création de la table can_be:", err);
+        console.error("Erreur lors de la création de la table classRoles:", err);
       });
   })
-  // Attendre que la table can_be soit créée avant de créer la table characters
+  // Attendre que la table classRoles soit créée avant de créer la table characters
   .then(() => {
     pool
       .query(
@@ -69,4 +78,22 @@ const createClassAndRolesTables = pool
       .catch((err) => {
         console.error("Erreur lors de la création de la table characters:", err);
       });
-  });
+  })
+  // Attendre que la table characters soit créée avant de créer la table partiesCharacters
+  .then(() => {
+    pool
+      .query(
+        `CREATE TABLE IF NOT EXISTS partiesCharacters (
+        partiesId       integer NOT NULL,
+        charactersId   integer NOT NULL,
+        CONSTRAINT fk_parties FOREIGN KEY(partiesId) REFERENCES parties(id),
+        CONSTRAINT fk_characters FOREIGN KEY(charactersId) REFERENCES characters(id)
+    )`
+      )
+      .then(() => {
+        console.log("Table partiesCharacters créée avec succès");
+      })
+      .catch((err) => {
+        console.error("Erreur lors de la création de la table partiesCharacters:", err);
+      });
+  })
