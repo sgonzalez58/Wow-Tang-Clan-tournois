@@ -1,1 +1,2 @@
 Pour créer la base de donnée, il faut lancer la commande ``` node back/data/db-init.js ```
+Pour remplir la base de donnée, il faut lancer la commande ``` node back/data/seed.js ```
