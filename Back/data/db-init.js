@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS roles (
 
 const createPartiesTableQuery = `
 CREATE TABLE IF NOT EXISTS parties (
-  id        SERIAL PRIMARY KEY
+  id          SERIAL PRIMARY KEY,
+  partyName   varchar(64) NOT NULL UNIQUE
 )`;
 
 const createClassAndRolesTables = pool
@@ -67,8 +68,10 @@ const createClassAndRolesTables = pool
             roleId      integer NOT NULL,
             ilvl        integer NOT NULL,
             rio         integer NOT NULL,
+            partyId     integer NOT NULL,
             CONSTRAINT fk_role FOREIGN KEY(roleId) REFERENCES roles(id),
             CONSTRAINT fk_class FOREIGN KEY(classId) REFERENCES class(id),
+            CONSTRAINT fk_party FOREIGN KEY(partyId) REFERENCES parties(id),
             CHECK (ilvl BETWEEN 0 AND 645),
             CHECK (rio BETWEEN 0 AND 4500)
         )`
@@ -78,25 +81,6 @@ const createClassAndRolesTables = pool
           })
           .catch((err) => {
             console.error("Erreur lors de la création de la table characters:", err);
-          })
-          // Attendre que la table characters soit créée avant de créer la table partiesCharacters
-          .then(() => {
-            pool
-              .query(
-                `CREATE TABLE IF NOT EXISTS partiesCharacters (
-                partiesId       integer NOT NULL,
-                charactersId   integer NOT NULL,
-                CONSTRAINT fk_parties FOREIGN KEY(partiesId) REFERENCES parties(id),
-                CONSTRAINT fk_characters FOREIGN KEY(charactersId) REFERENCES characters(id),
-                CONSTRAINT partiescharacters_pkey PRIMARY KEY (partiesId, charactersId)
-            )`
-              )
-              .then(() => {
-                console.log("Table partiesCharacters créée avec succès");
-              })
-              .catch((err) => {
-                console.error("Erreur lors de la création de la table partiesCharacters:", err);
-              });
           })
       })
   })
