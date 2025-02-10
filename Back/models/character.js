@@ -19,6 +19,7 @@ const Characters = {
     });
   },
 
+  // Récupérer un character avec son id
   getCharacter: (characterId, callback) => {
     const query = "SELECT * FROM characters where id = $1";
     pool.query(query, [characterId], (err, result) => {
@@ -36,6 +37,7 @@ const Characters = {
     })
   },
 
+  // Créer un character
   create: (character, callback) => {
     const query =
       "INSERT INTO characters (name, classId, roleId, ilvl, rio) VALUES ($1, $2, $3, $4, $5,) RETURNING id";
@@ -51,6 +53,7 @@ const Characters = {
     );
   },
 
+  // Modifier tous les champs d'un character
   update: (characterId, updates, callback) => {
     const query = `
         UPDATE tasks
