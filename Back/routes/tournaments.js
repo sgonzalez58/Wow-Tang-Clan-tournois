@@ -55,7 +55,7 @@ router.get("/delete/:tournamentId", (req, res) => {
 router.post("/", (req, res) => {
   const { name, startDate, endDate, price, description } = req.body;
 
-  const regex_name = /([a-zA-Z1-9]+\s?[a-zA-Z1-9]+){0,64}/;
+  const regex_name = /[ a-zA-Z1-9]{0,64}/;
 
   if(!name || !regex_name.test(name)){
     return res.json({
@@ -63,19 +63,25 @@ router.post("/", (req, res) => {
     })
   }
 
-  if(!startDate || isNan(new Date(startDate))){
+  if(!startDate || isNaN(new Date(startDate))){
     return res.json({
       err: "La date de départ n'est pas conforme."
     })
   }
 
-  if(!endDate || isNan(new Date(endDate))){
+  if(!endDate || isNaN(new Date(endDate))){
     return res.json({
       err: "La date de fin n'est pas conforme."
     })
   }
 
-  if(!price || NaN(price)){
+  if(new Date(endDate) < new Date(startDate)){
+    return res.json({
+      err: "La date de fin doit être après ou le même jour que la date de départ."
+    })
+  }
+
+  if(!price || isNaN(price)){
     return res.json({
       err: "Le prix doit être un nombre."
     })
@@ -93,7 +99,7 @@ router.post("/", (req, res) => {
       startDate: startDate,
       endDate: endDate,
       price: price,
-      description: description.trim().escape()
+      description: description.trim()
     },
     (err, tournamentId) => {
       if (err) {
@@ -115,27 +121,33 @@ router.post("/update/:tournamentId", (req, res) => {
   const tournamentId = req.params.tournamentId;
   const { name, startDate, endDate, price, description } = req.body;
 
-  const regex_name = /([a-zA-Z1-9]+\s?[a-zA-Z1-9]+){0,64}/;
+  const regex_name = /[ a-zA-Z1-9]{0,64}/;
 
-  if(!name || !regex_name.test(name)){
+  if(!name || !regex_name.test(name.trim())){
     return res.json({
       err: "Le nom du tournament n'est pas conforme."
     })
   }
 
-  if(!startDate || isNan(new Date(startDate))){
+  if(!startDate || isNaN(new Date(startDate))){
     return res.json({
       err: "La date de départ n'est pas conforme."
     })
   }
 
-  if(!endDate || isNan(new Date(endDate))){
+  if(!endDate || isNaN(new Date(endDate))){
     return res.json({
       err: "La date de fin n'est pas conforme."
     })
   }
 
-  if(!price || NaN(price)){
+  if(new Date(endDate) < new Date(startDate)){
+    return res.json({
+      err: "La date de fin doit être après ou le même jour que la date de départ."
+    })
+  }
+
+  if(!price || isNaN(price)){
     return res.json({
       err: "Le prix doit être un nombre."
     })
@@ -154,7 +166,7 @@ router.post("/update/:tournamentId", (req, res) => {
       startDate: startDate,
       endDate: endDate,
       price: price,
-      description: description.trim().escape()
+      description: description.trim()
     },
     (err, tournamentId) => {
       if (err) {

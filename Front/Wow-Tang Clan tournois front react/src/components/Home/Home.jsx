@@ -11,7 +11,16 @@ const Home = () =>{
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                    <div className="text-2xl mb-4">🏆</div>
+                    <p className="text-lg font-semibold text-gray-900 mb-2">Créer et participez aux tournois</p>
+                    <p className="text-gray-600">
+                        Organisez des tournois et bravez des donjons pour remporter le prize cash !
+                    </p>
+                </div>
+
                 <div className="bg-white p-6 rounded-lg shadow-md">
                     <div className="text-2xl mb-4">📝</div>
                     <p className="text-lg font-semibold text-gray-900 mb-2">Créez une équipe</p>
@@ -33,6 +42,9 @@ const Home = () =>{
             <div className="bg-blue-50 p-8 rounded-lg shadow-md mb-12">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Prêt à commencer ?</h2>
                 <div className="space-x-4">
+                    <Link to="/tournaments" className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700">
+                        Voir les tournois
+                    </Link>
                     <Link to="/parties" className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700">
                         Voir les équipes
                     </Link>

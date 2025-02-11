@@ -17,6 +17,7 @@ const partiesRoutes = require("./routes/parties");
 const classesRoutes = require("./routes/classes");
 const rolesRoutes = require("./routes/roles");
 const dungeonsRoutes = require("./routes/dungeons");
+const tournamentsRoutes = require("./routes/tournaments");
 
 app.get("/", (req, res) => {
   res.send("API up")
@@ -27,6 +28,7 @@ app.use("/parties", partiesRoutes)
 app.use("/classes", classesRoutes)
 app.use("/roles", rolesRoutes)
 app.use("/dungeons", dungeonsRoutes)
+app.use("/tournaments", tournamentsRoutes)
 
 
 // Server setup

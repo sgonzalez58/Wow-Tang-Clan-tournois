@@ -25,8 +25,9 @@ const createDungeonsTableQuery = `
 CREATE TABLE IF NOT EXISTS dungeons (
   id          SERIAL PRIMARY KEY,
   name        varchar(64) NOT NULL UNIQUE,
-  difficulty  integer NOT NULL,
-  timer       time NOT NULL
+  difficulty  integer,
+  timer       time NOT NULL,
+  CHECK (difficulty BETWEEN 2 AND 30)
 )
 `;
 
@@ -37,8 +38,9 @@ CREATE TABLE IF NOT EXISTS tournaments (
   startDate     date NOT NULL,
   endDate       date NOT NULL,
   price         integer NOT NULL,
-  description   text NOT NULL
-  canceled      boolean NOT NULL DEFAULT false
+  description   text NOT NULL,
+  canceled      boolean NOT NULL DEFAULT false,
+  CHECK (startDate <= endDate)
 )   
 `
 

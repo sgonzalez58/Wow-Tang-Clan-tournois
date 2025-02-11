@@ -12,6 +12,9 @@ const Layout = () => {
                             <Link to="/" className="text-xl font-bold text-gray-800">Wow-Tang Clan Tournois</Link>
                         </div>
                         <div className="flex items-center space-x-4">
+                            <Link to="/tournaments" className="text-gray-600 hover:text-gray-900">
+                                Les tournois
+                            </Link>
                             <Link to="/parties" className="text-gray-600 hover:text-gray-900">
                                 Les équipes
                             </Link>

@@ -21,7 +21,7 @@ const Tournaments = {
 
   // Récupérer un tournaments avec son id
   getTournament: (tournamentId, callback) => {
-    const query = "SELECT * FROM tournament WHERE id = $1";
+    const query = "SELECT * FROM tournaments WHERE id = $1";
     pool.query(query, [tournamentId], (err, result) => {
         if (err) {
             console.error(
@@ -77,7 +77,7 @@ const Tournaments = {
   delete: async (tournamentId, callback) => {
     const query = `
     UPDATE tournaments
-      SET canceled = true, endDate = CURRENT_DATE
+      SET canceled = true, endDate = CURRENT_DATE, startDate = CURRENT_DATE
       WHERE id = $1
     `;
     const params = [tournamentId];

@@ -97,6 +97,18 @@ async function main(){
           roles: ['healer', 'damage']
       }
   }
+
+  const donjons = {
+    "The Stonevault" : "00:33:00",
+    "The Dawnbreaker" : "00:35:00",
+    "Ara-Kara, City of Echoes" : "00:30:00",
+    "City of Threads" : "00:38:00",
+    "Mists of Tirna Scithe" : "00:30:00",
+    "The Necrotic Wake" : "00:36:00",
+    "Siege of Boralus" : "00:36:00",
+    "Grim Batol" : "00:34:00"
+  }
+
   const query_roles = 
   "INSERT INTO roles (label)\
     VALUES ('tank'), ('healer'), ('damage')\
@@ -121,6 +133,17 @@ async function main(){
     for (const r of classes[c].roles){
       await pool.query(query_classRoles, [c, r])
     }
+  }
+
+  const query_donjons =
+  "INSERT INTO dungeons (name, timer)\
+    VALUES ($1, $2)\
+    ON CONFLICT (name)\
+    DO UPDATE SET\
+        timer = EXCLUDED.timer"
+
+  for (const d in donjons) {
+    await pool.query(query_donjons, [d, donjons[d]])
   }
 }
 
