@@ -30,6 +30,17 @@ CREATE TABLE IF NOT EXISTS dungeons (
 )
 `;
 
+const createTournamentsTableQuery = `
+CREATE TABLE IF NOT EXISTS tournaments (
+  id            SERIAL PRIMARY KEY,
+  name          varchar(64) NOT NULL UNIQUE,
+  startDate     date NOT NULL,
+  endDate       date NOT NULL,
+  price         integer NOT NULL,
+  description   text NOT NULL
+)   
+`
+
 const createClassAndRolesTables = pool
   .query(createClassTableQuery)
   .catch((err) => {
@@ -66,6 +77,15 @@ const createClassAndRolesTables = pool
 
   .then(() => {
     console.log("Table Dungeons créée avec succès");
+    return pool.query(createTournamentsTableQuery);
+  })
+  .catch((err) => {
+    console.error("Erreur lors de la création de la table tournaments :", err);
+    throw err;
+  })
+
+  .then(() => {
+    console.log("Table Tournaments créée avec succès");
   });
 
   // Attendre que les tables roles et class soient créées avant de créer la table can_be
@@ -114,40 +134,44 @@ const createClassAndRolesTables = pool
           })
       })
   })
-  // attendre que la table dungeons soit créée avant de créer la table tournaments
+  // attendre que les tables parties et tournaments soient créées avant de créer la table tournamentsRegistrations
   .then(() => {
     pool.query(
-        `CREATE TABLE IF NOT EXISTS tournaments (
-          id          SERIAL PRIMARY KEY,
-          startDate   date NOT NULL,
-          endDate     date NOT NULL,
-          dungeonId   integer NOT NULL,
-          CONSTRAINT fk_dungeon FOREIGN KEY(dungeonId) REFERENCES dungeons(id)
-        )
-        `
-    )
-    .catch((err) => {
-      console.error("Erreur lors de la création de la table tournaments:", err);
-    })
-    // attendre que les tables parties et tournaments soient créées avant de créer la table partiesTournaments
-    .then(() => {
-      console.log("Table tournaments créée avec succès");
-      pool.query(
-        `CREATE TABLE IF NOT EXISTS partiesTournaments (
+        `CREATE TABLE IF NOT EXISTS tournamentsRegistrations (
         partyId         integer NOT NULL,
         tournamentId    integer NOT NULL,
-        timer           time,
         CONSTRAINT fk_party FOREIGN KEY(partyId) REFERENCES parties(id),
-        CONSTRAINT fk_tournamenets FOREIGN KEY(tournamentId) REFERENCES tournaments(id),
+        CONSTRAINT fk_tournament FOREIGN KEY(tournamentId) REFERENCES tournaments(id),
         CONSTRAINT partiestournaments_pkey PRIMARY KEY (partyId, tournamentId)
       )`
-      )
-      .then(() => {
-        console.log("Table partiesTournaments créée avec succès");
-      })
-      .catch((err) => {
-        console.error("Erreur lors de la création de la table partiesTournaments:", err);
-      })
+    )
+    .catch((err) => {
+      console.error("Erreur lors de la création de la table tournamentsRegistrations:", err);
+    })
+    .then(() => {
+      console.log("Table tournamentsRegistrations créée avec succès");
+    })
+  })
+  
+  // attendre que les tables parties, tournaments et dungeons soient créées avant de créer la table partyTimer
+  .then(() => {
+    pool.query(
+        `CREATE TABLE IF NOT EXISTS partyTimer (
+        partyId         integer NOT NULL,
+        tournamentId    integer NOT NULL,
+        dungeonId       integer NOT NULL,
+        timer           time,
+        CONSTRAINT fk_party FOREIGN KEY(partyId) REFERENCES parties(id),
+        CONSTRAINT fk_tournament FOREIGN KEY(tournamentId) REFERENCES tournaments(id),
+        CONSTRAINT fk_dungeon FOREIGN KEY(dungeonId) REFERENCES dungeons(id),
+        CONSTRAINT partiestournamentsdungeons_pkey PRIMARY KEY (partyId, tournamentId, dungeonId)
+      )`
+    )
+    .catch((err) => {
+      console.error("Erreur lors de la création de la table partyTimer:", err);
+    })
+    .then(() => {
+      console.log("Table partyTimer créée avec succès");
     })
   })
   
