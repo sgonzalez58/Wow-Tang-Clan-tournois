@@ -16,6 +16,7 @@ const charactersRoutes = require("./routes/characters");
 const partiesRoutes = require("./routes/parties");
 const classesRoutes = require("./routes/classes");
 const rolesRoutes = require("./routes/roles");
+const dungeonsRoutes = require("./routes/dungeons");
 
 app.get("/", (req, res) => {
   res.send("API up")
@@ -25,6 +26,7 @@ app.use("/characters", charactersRoutes)
 app.use("/parties", partiesRoutes)
 app.use("/classes", classesRoutes)
 app.use("/roles", rolesRoutes)
+app.use("/dungeons", dungeonsRoutes)
 
 
 // Server setup

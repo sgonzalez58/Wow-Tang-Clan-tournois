@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS tournaments (
   endDate       date NOT NULL,
   price         integer NOT NULL,
   description   text NOT NULL
+  canceled      boolean NOT NULL DEFAULT false
 )   
 `
 

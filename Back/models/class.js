@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 const pool = new Pool();
 
-// Modèle characters avec des fonctions pour interagir avec la base de données
+// Modèle class avec des fonctions pour interagir avec la base de données
 const Classes = {
   // Récupérer toutes les class
   getAllClasses: (callback) => {

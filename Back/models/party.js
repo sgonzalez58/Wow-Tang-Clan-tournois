@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 const pool = new Pool();
 
-// Modèle characters avec des fonctions pour interagir avec la base de données
+// Modèle parties avec des fonctions pour interagir avec la base de données
 const Parties = {
   // Récupérer tous les characters
   getAllParties: (callback) => {
