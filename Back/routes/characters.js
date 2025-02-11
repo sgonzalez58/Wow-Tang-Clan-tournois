@@ -57,7 +57,7 @@ router.get("/delete/:characterId", (req, res) => {
 router.post("/", (req, res) => {
   const { name, classId, roleId, ilvl, rio } = req.body;
   
-  const regex_name = /[a-zA-Z1-9]{6,64}/;
+  const regex_name = /[a-zA-Z1-9]{3,64}/;
 
   if(!regex_name.test(name)){
     return res.json({
@@ -80,13 +80,13 @@ router.post("/", (req, res) => {
   Classes.getClass(classId, (err, result) =>{
     if(err){
       return res.json({
-        err: `Class ${classId} : err.message`
+        err: `Class ${classId} : ${err.message}`
       })
     }
     Roles.getRole(roleId, (err, result) =>{
       if(err){
         return res.json({
-          err: `Role ${roleId} : err.message`
+          err: `Role ${roleId} : ${err.message}`
         })
       }
       Characters.create(
@@ -117,7 +117,7 @@ router.post("/update/:characterId", (req, res) => {
   const characterId = req.params.characterId;
   const { name, classId, roleId, ilvl, rio } = req.body;
 
-  const regex_name = /[a-zA-Z1-9]{6,64}/;
+  const regex_name = /[a-zA-Z1-9]{3,64}/;
 
   if(!regex_name.test(name)){
     return res.json({

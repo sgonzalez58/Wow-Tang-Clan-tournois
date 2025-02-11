@@ -14,6 +14,8 @@ app.use(bodyParser.json());
 // Routes
 const charactersRoutes = require("./routes/characters");
 const partiesRoutes = require("./routes/parties");
+const classesRoutes = require("./routes/classes");
+const rolesRoutes = require("./routes/roles");
 
 app.get("/", (req, res) => {
   res.send("API up")
@@ -21,6 +23,8 @@ app.get("/", (req, res) => {
 
 app.use("/characters", charactersRoutes)
 app.use("/parties", partiesRoutes)
+app.use("/classes", classesRoutes)
+app.use("/roles", rolesRoutes)
 
 
 // Server setup

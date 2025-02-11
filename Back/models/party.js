@@ -5,7 +5,7 @@ const pool = new Pool();
 const Parties = {
   // Récupérer tous les characters
   getAllParties: (callback) => {
-    const query = "SELECT * FROM parties";
+    const query = "SELECT p.id, p.partyName, string_agg(c.name, ',') members FROM parties p, characters c WHERE c.partyid = p.id GROUP BY p.id ORDER BY p.id";
     pool.query(query, (err, results) => {
       if (err) {
         console.error(
@@ -21,7 +21,7 @@ const Parties = {
 
   // Récupérer une party avec son id
   getParty: (partyId, callback) => {
-    const query = "SELECT * FROM parties where id = $1";
+    const query = "SELECT p.id, p.partyName, string_agg(c.name, ',') members FROM parties p, characters c WHERE c.partyid = p.id AND p.id = $1 GROUP BY p.id";
     pool.query(query, [partyId], (err, result) => {
         if (err) {
             console.error(
@@ -40,7 +40,7 @@ const Parties = {
   // Créer une party et ajouter son id dans les characters
   create: (party, callback) => {
     const query =
-      "INSERT INTO party (name) VALUES ($1) RETURNING id";
+      "INSERT INTO parties (partyName) VALUES ($1) RETURNING id";
     pool.query(query, [party.partyName], (err, result) => {
       if (err) {
         console.error(
@@ -52,7 +52,7 @@ const Parties = {
       const partyId = result.rows[0].id;
 
       const query_characters = "UPDATE characters SET partyId = $1 WHERE id IN ($2, $3, $4, $5, $6)";
-      pool.query(query_characters, [partyId[0].id, party.tankMember, party.healerMember, party.damageMember1, party.damageMember2, party.damageMember3], (err, result) => {
+      pool.query(query_characters, [partyId, party.tankMember, party.healerMember, party.damageMember1, party.damageMember2, party.damageMember3], (err, result) => {
         if (err) {
           console.error(
               "Erreur lors de l'ajout des characters dans la party:",
@@ -67,14 +67,15 @@ const Parties = {
   },
 
   // Modifier le nom d'un party et changer les characters liés à cette party
-  update: (partyId, updates, callback) => {
+  update: async (partyId, updates, callback) => {
+    const client = await pool.connect()
     const query = `
         UPDATE parties
-        SET name = $2
+        SET partyName = $2
         WHERE id = $1
     `;
     const params = [partyId, updates.partyName];
-    pool.query(query, params, function (err, result) {
+    pool.query(query, params, async function (err, result) {
       if (err) {
         console.error(
           "Erreur lors de la modification du nom de la party:",
@@ -82,36 +83,50 @@ const Parties = {
         )
         return callback(err, null);
       }
-      const query_update_charaters = "UPDATE characters SET partyId = null WHERE partyId = $1;\
-                                      UPDATE characters SET partyId = $1 WHERE id IN ($2, $3, $4, $5, $6);"
-      pool.query(query_update_charaters, [partyId, updates.tankMember, updates.healerMember, updates.damageMember1, updates.damageMember2, updates.damageMember3], (err, result) => {
-        if (err) {
-          console.error(
-              "Erreur lors des changements de characters dans la party:",
-              err.message
-          );
-          return callback(err, null)
-        }
-        
-        
-          return callback(null, partyId)
-      })
+      try {
+        await client.query('BEGIN')
+        const query_update_old_charaters = "UPDATE characters SET partyId = null WHERE partyId = $1"
+        const res = await client.query(query_update_old_charaters, [partyId]);
+
+        const query_update_charaters = "UPDATE characters SET partyId = $1 WHERE id IN ($2, $3, $4, $5, $6)"
+        await client.query(query_update_charaters, [partyId, updates.tankMember, updates.healerMember, updates.damageMember1, updates.damageMember2, updates.damageMember3])
+        await client.query('COMMIT')
+      } catch (e) {
+        await client.query('ROLLBACK')
+        console.error(
+          "Erreur lors des changements de characters dans la party:",
+          e.message
+        )
+        return callback(e, null)
+      } finally {
+        client.release()
+        return callback(null, partyId)
+      }
     });
   },
 
   // Supprimer une party et retirer le partyId des characters liés à cette party
-  delete: (partyId, callback) => {
-    const query = "UPDATE characters SET partyId = null WHERE partyId = $1;\
-                  DELETE FROM parties WHERE id = $1";
-    pool.query(query, [partyId], (err, result) => {
-      if (err) {
-        return callback(err);
-      }
-      if (result.rowCount === 0) {
-        return callback(new Error("Party non trouvée"));
-      }
-      callback(null);
-    });
+  delete: async (partyId, callback) => {
+    const client = await pool.connect()
+    try {
+      await client.query('BEGIN')
+      const query_update_charaters = "UPDATE characters SET partyId = null WHERE partyId = $1"
+      const res = await client.query(query_update_charaters, [partyId]);
+
+      const query_delete_party = "DELETE FROM parties WHERE id = $1"
+      await client.query(query_delete_party, [partyId])
+      await client.query('COMMIT')
+    } catch (e) {
+      await client.query('ROLLBACK')
+      console.error(
+        "Erreur lors de la suppression la party:",
+        e.message
+      )
+      return callback(e)
+    } finally {
+      client.release()
+      return callback(null)
+    }
   },
 };
 

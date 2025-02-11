@@ -56,7 +56,7 @@ router.get("/delete/:partyId", (req, res) => {
 router.post("/", (req, res) => {
   const { partyName, tankMember, healerMember, damageMember1, damageMember2, damageMember3 } = req.body;
 
-  const regex_partyName = /[a-zA-Z1-9]{6,64}/;
+  const regex_partyName = /([a-zA-Z1-9]+\s?[a-zA-Z1-9]+){0,64}/;
 
   if(!regex_partyName.test(partyName)){
     return res.json({
@@ -138,7 +138,7 @@ router.post("/update/:partyId", (req, res) => {
   const partyId = req.params.partyId;
   const { partyName, tankMember, healerMember, damageMember1, damageMember2, damageMember3 } = req.body;
 
-  const regex_partyName = /[a-zA-Z1-9]{6,64}/;
+  const regex_partyName = /([a-zA-Z1-9]+\s?[a-zA-Z1-9]+){0,64}/;
 
   if(!regex_partyName.test(partyName)){
     return res.json({

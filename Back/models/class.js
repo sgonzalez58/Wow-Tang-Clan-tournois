@@ -5,7 +5,7 @@ const pool = new Pool();
 const Classes = {
   // Récupérer toutes les class
   getAllClasses: (callback) => {
-    const query = "SELECT * FROM class";
+    const query = "SELECT c.*, string_agg(r.label, ',') roles FROM class c, roles r, classroles cr WHERE cr.classId = c.id AND cr.roleId = r.id GROUP BY c.id Order By c.id";
     pool.query(query, (err, results) => {
       if (err) {
         console.error(
