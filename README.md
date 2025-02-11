@@ -1,8 +1,8 @@
 Partie Back : 
     Pour commencer, lancer ```npm install```.
     Configurer le fichier `\Back\.env`
-    Pour créer la base de donnée, il faut lancer la commande ``` node back/data/db-init.js ```
-    Pour remplir la base de donnée, il faut lancer la commande ``` node back/data/seed.js ```
+    Pour créer la base de donnée, il faut lancer la commande ``` node data/db-init.js ``` depuis le dossier `\Back`
+    Pour remplir la base de donnée, il faut lancer la commande ``` node data/seed.js ``` depuis le dossier `\Back`
     ```node \Back\app.js``` pour lancer le serveur
 
 Partie front :
