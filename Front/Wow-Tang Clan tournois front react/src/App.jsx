@@ -11,6 +11,8 @@ import UpdateParty from './components/Parties/Update'
 import Tournaments from './components/Tournaments/Tournaments'
 import CreateTournament from './components/Tournaments/Create'
 import UpdateTournament from './components/Tournaments/Update'
+import ParticipateTournament from './components/Tournaments/Participate'
+import TournamentRecords from './components/Tournaments/Records'
 
 
 function App() {
@@ -35,6 +37,8 @@ function App() {
               <Route index element={<Tournaments/>}/>
               <Route path="create" element={<CreateTournament/>}/>
               <Route path="update/:tournamentId" element={<UpdateTournament/>}/>
+              <Route path=":tournamentId" element={<ParticipateTournament/>}/>
+              <Route path=":tournamentId/records" element={<TournamentRecords/>}/>
             </Route>
           </Route>
         </Routes>

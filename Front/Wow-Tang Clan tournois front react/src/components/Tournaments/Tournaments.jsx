@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 const Tournaments = () =>{
     
-    const [tounaments, setTournaments] = useState([]);
+    const [tournaments, setTournaments] = useState([]);
 
     useEffect(()=>{
         fetch("http://localhost:3000/tournaments", {
@@ -33,7 +33,7 @@ const Tournaments = () =>{
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    { tounaments?.length > 0 && tounaments.map((tournament) => tournament && (
+                    { tournaments?.length > 0 && tournaments.map((tournament) => tournament && (
                     <div 
                     key={`party-${tournament.id}`}
                     className={`bg-white p-4 rounded-lg shadow-md`}
@@ -77,11 +77,11 @@ const Tournaments = () =>{
                                 Modifier
                             </Link>
                             <Link
-                                id={`register_tournament_button-${tournament.id}`}
-                                to={`register/${tournament.id}`}
+                                id={`participate_tournament_button-${tournament.id}`}
+                                to={`${tournament.id}`}
                                 className="px-3 py-1.5 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center"
                             >
-                                S'inscrire
+                                Participer
                             </Link>
                         </div>
                         )}
